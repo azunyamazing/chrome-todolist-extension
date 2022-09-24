@@ -5,8 +5,15 @@
 :collision: 放心食用步骤：
 
 1. 下载仓库文件代码本地 `git clone https://github.com/azunyamazing/promise-a-plus.git`
-2. 浏览器输入 `chrome://extensions/` 进入扩展页面, 点击加载已解压的扩展程序
+2. 浏览器输入 `chrome://extensions/` 进入扩展页面, 点击加载已解压的扩展程序, 选择 dist 文件夹即可
 3. 点击浏览器右上角插件 icon， 可以固定在导航栏上， 点击 todolist icon
+
+### Debug
+
+```bash
+npm i
+npm run build
+```
 
 ### Vueact
 

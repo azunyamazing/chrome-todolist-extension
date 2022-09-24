@@ -1,0 +1,25 @@
+{
+  "name": "todolist-extension",
+  "version": "1.0.0",
+  "description": ":star2: Chrome 扩展工具, 用于记录日常的 Todolist",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azunyamazing/chrome-todolist-extension.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/azunyamazing/chrome-todolist-extension/issues"
+  },
+  "homepage": "https://github.com/azunyamazing/chrome-todolist-extension#readme",
+  "dependencies": {
+    "typescript": "^4.8.3",
+    "vite": "^3.1.3"
+  }
+}
