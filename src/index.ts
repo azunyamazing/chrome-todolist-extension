@@ -1,4 +1,5 @@
 import { useReactive } from "./reactive/use-reactive";
+import { renderDOM } from "./template/render-dom";
 
 function App() {
   const state = useReactive({
@@ -7,9 +8,24 @@ function App() {
 
   console.log(state);
 
+  const onClick = () => {
+    state.name = "nono";
+  };
+
+  const onChange = () => {
+    state.name = "azunya";
+  };
+
   return {
-    template: "<h1>hello Eriri~</h1>",
+    template: `<div id="eriri"    value={state.name} data-dom-eiri >
+      <div onClick={onClick}>{{ state.name }}</div>
+      <input value={state.name} onChange={onChange} />
+    </div>`,
+    state,
+    methods: {
+      onClick,
+    },
   };
 }
 
-App();
+renderDOM(App(), document.getElementById("app"));
