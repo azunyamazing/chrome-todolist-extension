@@ -1,9 +1,10 @@
-import { useReactive } from "./reactive/use-reactive";
-import { renderDOM } from "./template/render-dom";
+import { useReactive } from "./reactive";
+import { renderDOM } from "./template";
 
 function App() {
   const state = useReactive({
     name: "Eriri",
+    age: 17,
   });
 
   console.log(state);
@@ -18,10 +19,12 @@ function App() {
 
   return {
     template: `<div id="eriri"    value={state.name} data-dom-eiri >
-      <div onClick={onClick}>{{ state.name }}</div>
+      <div onClick={onClick}>{{ state.age }}</div>
       <input value={state.name} onChange={onChange} />
     </div>`,
-    state,
+    state: {
+      state,
+    },
     methods: {
       onClick,
     },

@@ -2,8 +2,8 @@ import { TriggerOptions } from "../constants";
 import { hasOwnKey } from "../utils/has-own-key";
 import { isEqual } from "../utils/is-equal";
 import { isObject } from "../utils/is-object";
-import { trigger } from "./trigger";
-import { useReactive } from "./use-reactive";
+import { trigger } from "../template/effect";
+import { useReactive } from ".";
 
 export function createGetter() {
   return (target: object, key: string, receiver: object) => {
