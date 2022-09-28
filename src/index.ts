@@ -3,26 +3,32 @@ import { renderDOM } from "./template";
 
 function App() {
   const data = useReactive({
-    name: "Eriri",
-    age: 17,
+    message: "跟随输入框响应式改变值",
+    count: 0,
   });
 
   const onClick = () => {
-    // data.name = "nono";
+    data.count += 1;
     console.log('button click');
   };
 
-  const onChange = () => {
-    // data.name = "azunya";
+  const onChange = (e: Event) => {
+    const input = e.target as HTMLInputElement;
+    data.message = input.value;
     console.log('input change');
   };
 
   return {
     template: `
       <div id="eriri">
-        <span>nono</span>
-        <input value={data.name} onChange={onChange} />
-        <button onClick={onClick}>click me</button>
+        <div style="margin: 50px">
+          <p>{{ data.message }}</p>
+          <input value="" onChange={onChange} />
+        </div>
+        <div style="margin: 50px">
+          <span>{{ data.count }}</span>
+          <button onClick={onClick}>click me change count</button>
+        <div>
       </div>
     `,
     state: {
