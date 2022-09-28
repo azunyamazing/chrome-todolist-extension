@@ -3,6 +3,7 @@
  */
 
 import { EventPool, EventType } from "../constants";
+import { camelKeys } from "../utils";
 import { useId } from "../utils/use-id";
 import type { Component } from "./type";
 
@@ -51,8 +52,9 @@ export function compilerEvent(template: string, map: ComponentEventMap): string 
   let result = template;
 
   EventPool.forEach((event) => {
-    const regexp = new RegExp(`<.*${event}=\\{(.*)\\}\\s*/?>`, "g");
-    const clearRegexp = new RegExp(`\\s*${event}=\\{.*\\}`);
+    const eventName = camelKeys('on', event);
+    const regexp = new RegExp(`<.*${eventName}=\\{(.*)\\}\\s*/?>`, "g");
+    const clearRegexp = new RegExp(`\\s*${eventName}=\\{.*\\}`);
 
     result = result.replace(regexp, (str, key) => {
       // 清除事件标记

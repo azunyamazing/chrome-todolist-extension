@@ -5,8 +5,8 @@ export const enum TriggerOptions {
 }
 
 export enum EventType {
-  CLICK = "onClick",
-  CHANGE = "onChange",
+  CLICK = "click",
+  CHANGE = "change",
 }
 
 export const EventPool = [EventType.CHANGE, EventType.CLICK]
