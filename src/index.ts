@@ -22,7 +22,7 @@ function App() {
     template: `
       <div id="eriri">
         <div style="margin: 50px">
-          <p>{{ data.message }}</p>
+          <h3>{{ data.message }}</h3>
           <input value="" onChange={onChange} />
         </div>
         <div style="margin: 50px">
