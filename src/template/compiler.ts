@@ -1,7 +1,5 @@
 /**
  * 编译模板 & 替换事件和状态
- *
- * 将 <div onClick={onClick}>{{ count }}</div> 编译成 <div data-dom-eriri>0</div>
  */
 
 import { useId } from "../utils/use-id";
@@ -12,15 +10,27 @@ export enum EventType {
   CHANGE = "onChange",
 }
 
-interface EventNodeType {
+export enum StateType {
+  ATTR = 'attribute',
+  VALUE = 'value'
+}
+
+export interface EventNodeType {
   type: EventType;
   flag: string;
   exp: string;
 }
 
-interface StateNodeType {
-  exp: string;
-  value: unknown;
+export interface StateNodeType {
+  flag: string;
+  values: Array<{
+    type: StateType.ATTR;
+    key: string;
+    exp: string;
+  } | {
+    type: StateType.VALUE;
+    exp: string;
+  }>;
 }
 
 export type ComponentNode = EventNodeType | StateNodeType;
@@ -32,16 +42,14 @@ export type CompilerOptions = Omit<Component, "template">;
 
 // 简单处理事件和状态的绑定
 export function compiler(template: string, options: CompilerOptions) {
-  let str = compilerEventBinding(template, options.methods, componentEventMap);
-  str = compilerStateBinding(str, options.state, componentStateMap);
-
+  let str = compilerEvent(template, options.methods, componentEventMap);
+  str = compilerState(str, options.state, componentStateMap);
   return str;
 }
-export function compilerEventBinding(template: string, events: CompilerOptions["methods"] = {}, map: Map<string, EventNodeType>): string {
-  console.log("template", template);
 
+// 编译模板事件
+export function compilerEvent(template: string, events: CompilerOptions["methods"] = {}, map: Map<string, EventNodeType>): string {
   let result = template;
-
   const eventList: Array<EventType> = [EventType.CLICK, EventType.CHANGE];
 
   eventList.forEach((event) => {
@@ -65,22 +73,55 @@ export function compilerEventBinding(template: string, events: CompilerOptions["
   return result;
 }
 
-// TODO: 这里应该也通过 flag 来进行保存结果
+// 编译模板状态
+const tagStateRegexp = /<.*(\{\s*[a-zA-Z\.]+\s*\})\s*[^<>]*\/?>/;
+const valueStateRegexp = /<[^>]+>\s*(\{\{\s*[a-zA-Z\.]+\s*\}\})\s*<\/[a-z]+>/;
+export function compilerState(template: string, state: CompilerOptions["state"] = {}, map: Map<string, StateNodeType>): string {
+  let result = template;
 
-export function compilerStateBinding(template: string, state: CompilerOptions["state"] = {}, map: Map<string, StateNodeType>): string {
-  template.match(/\{\s*([a-zA-Z\.]+)\s*\}/g)?.forEach((exp) => {
-    const key = exp.slice(1, -1).trim();
-    const value = key.split(".").reduce((result, key) => result[key], state);
+  // 处理 tag 上的 { state.name } 表达式
+  result = result.replace(new RegExp(tagStateRegexp, 'g'), (tagStr) => {
+    // 过滤出所有类似 <div name={ state.name } > 标签
+    const values: StateNodeType['values'] = [];
 
-    map.set(key, value);
-  });
+    // 过滤出所有类似 name={ state.name } 语句
+    const value = tagStr.replace(/[a-zA-Z\.]+=\{\s*([a-zA-Z\.]+)\s*\}/g, (stateStr, exp: string) => {
+      // 存储当前的 key 以及对应的表达式
+      const key = stateStr.split('=')[0];
+      values.push({ type: StateType.ATTR, key, exp })
+      const realValue = exp.split(".").reduce((result, key) => result[key], state);
+      return `${key}="${realValue}"`;
+    })
 
-  return template;
+    const { flag, template: result } = compilerNodeFlag(value)
+    map.set(flag, { flag, values, })
+    return result
+  })
+
+  // 处理 tag 内 {{ state.name }} 表达式
+  result = result.replace(new RegExp(valueStateRegexp, 'g'), (tagStr) => {
+    const values: StateNodeType['values'] = [];
+
+    // 过滤出所有类似 {{ state.name }} 语句
+    const value = tagStr.replace(/\{\{\s*([a-zA-Z\.]+)\s*\}\}/g, (stateStr, exp: string) => {
+      values.push({ type: StateType.VALUE, exp, })
+      const realValue = exp.split(".").reduce((result, key) => result[key], state);
+      return realValue
+    })
+
+    const { flag, template: result } = compilerNodeFlag(value)
+    if (map.has(flag)) {
+      map.get(flag).values.push(...values);
+    } else {
+      map.set(flag, { flag, values })
+    }
+    return result
+  })
+  return result;
 }
 
-const flagRegExp = /data-dom-(.*)\s*/;
+const flagRegExp = /.*data-dom-([a-z0-9]+)\s*.*/;
 const addFlagRegExp = /(.[^\/])(\/?>)/;
-
 export function compilerNodeFlag(template: string) {
   let flag = "";
 

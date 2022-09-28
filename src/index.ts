@@ -18,9 +18,10 @@ function App() {
   };
 
   return {
-    template: `<div id="eriri"    value={state.name} data-dom-eiri >
+    template: `<div id="eriri"    value={state.name} key={state.age} data-dom-eiri >
       <div onClick={onClick}>{{ state.age }}</div>
       <input value={state.name} onChange={onChange} />
+      <span>nono</span>
     </div>`,
     state: {
       state,

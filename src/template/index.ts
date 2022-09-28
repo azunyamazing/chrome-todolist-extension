@@ -8,6 +8,8 @@ export function renderDOM(component: Component, ele: HTMLElement) {
   const { template, state = {}, methods = {} } = component;
   const htmlStr = compiler(template, { state, methods });
 
+  console.log('htmlStr', htmlStr);
+
   // 这里简单用 innerHTML 来做吧
   ele.innerHTML = htmlStr;
 
