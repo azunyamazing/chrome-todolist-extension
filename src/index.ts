@@ -2,32 +2,33 @@ import { useReactive } from "./reactive";
 import { renderDOM } from "./template";
 
 function App() {
-  const state = useReactive({
+  const data = useReactive({
     name: "Eriri",
     age: 17,
   });
 
-  console.log(state);
-
   const onClick = () => {
-    state.name = "nono";
+    data.name = "nono";
   };
 
   const onChange = () => {
-    state.name = "azunya";
+    data.name = "azunya";
   };
 
   return {
-    template: `<div id="eriri"    value={state.name} key={state.age} data-dom-eiri >
-      <div onClick={onClick}>{{ state.age }}</div>
-      <input value={state.name} onChange={onChange} />
-      <span>nono</span>
-    </div>`,
+    template: `
+      <div id="eriri">
+        <span>nono</span>
+        <div onClick={onClick}>{{ data.age }}</div>
+        <input value={data.name} onChange={onChange} />
+      </div>
+    `,
     state: {
-      state,
+      data,
     },
     methods: {
       onClick,
+      onChange,
     },
   };
 }
