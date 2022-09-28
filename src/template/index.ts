@@ -1,5 +1,5 @@
 import { compiler } from "./compiler";
-import { bindEvent } from "./effect";
+import { bindElementEvent } from "./event-catch";
 
 import type { Component } from "./type";
 
@@ -11,6 +11,12 @@ export function renderDOM(component: Component, ele: HTMLElement) {
   // 这里简单用 innerHTML 来做
   ele.innerHTML = htmlStr;
 
-  // TODO: 绑定事件
-  // bindEvent(methods);
+  // 绑定事件
+  bindElementEvent(ele, methods);
 }
+
+
+export * from './compiler'
+export * from './state-watch'
+export * from './event-catch'
+export * from './type'

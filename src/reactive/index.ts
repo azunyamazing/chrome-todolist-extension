@@ -17,3 +17,5 @@ export function createReactiveObject<T extends object>(target: T, baseHandlers: 
   const proxy = new Proxy(target, baseHandlers);
   return proxy;
 }
+
+export * from './mutable-handlers'
