@@ -8,19 +8,21 @@ function App() {
   });
 
   const onClick = () => {
-    data.name = "nono";
+    // data.name = "nono";
+    console.log('button click');
   };
 
   const onChange = () => {
-    data.name = "azunya";
+    // data.name = "azunya";
+    console.log('input change');
   };
 
   return {
     template: `
       <div id="eriri">
         <span>nono</span>
-        <div onClick={onClick}>{{ data.age }}</div>
         <input value={data.name} onChange={onChange} />
+        <button onClick={onClick}>click me</button>
       </div>
     `,
     state: {
