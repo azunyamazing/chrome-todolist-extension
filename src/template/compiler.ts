@@ -13,9 +13,11 @@ export enum StateType {
 }
 
 export interface EventNodeType {
-  type: EventType;
   flag: string;
-  exp: string;
+  values: Array<{
+    type: EventType;
+    exp: string;
+  }>
 }
 
 export interface StateNodeType {
@@ -42,30 +44,38 @@ export type CompilerOptions = Omit<Component, "template">;
 
 // 简单处理事件和状态的绑定
 export function compiler(template: string, options: CompilerOptions) {
-  let str = compilerEvent(template, componentEventMap);
+  let str = compilerEvent(template, options.methods, componentEventMap);
   str = compilerState(str, options.state, componentStateMap);
   return str;
 }
 
 // 编译模板事件
-export function compilerEvent(template: string, map: ComponentEventMap): string {
-  let result = template;
+export function compilerEvent(template: string, methods: CompilerOptions['methods'], map: ComponentEventMap): string {
+  if (!methods) {
+    return;
+  }
 
-  EventPool.forEach((event) => {
+  let result = template;
+  Object.keys(EventPool).forEach((event: EventType) => {
     const eventName = camelKeys('on', event);
     const regexp = new RegExp(`<.*${eventName}=\\{(.*)\\}\\s*/?>`, "g");
     const clearRegexp = new RegExp(`\\s*${eventName}=\\{.*\\}`);
+
+    const values: EventNodeType['values'] = [];
 
     result = result.replace(regexp, (str, key) => {
       // 清除事件标记
       str = str.replace(clearRegexp, "");
 
       const { template, flag } = compilerNodeFlag(str);
-      map.set(flag, {
-        type: event,
-        flag,
-        exp: key.trim(),
-      });
+      values.push({ type: event, exp: key.trim() })
+
+      if (!map.has(flag)) {
+        map.set(flag, { flag, values })
+      } else {
+        map.get(flag).values.push({ type: event, exp: key.trim() })
+      }
+
       return template;
     });
   });
@@ -76,9 +86,12 @@ export function compilerEvent(template: string, map: ComponentEventMap): string 
 // 编译模板状态
 const tagStateRegexp = /<.*(\{\s*[a-zA-Z\.]+\s*\})\s*[^<>]*\/?>/;
 const valueStateRegexp = /<[^>]+>\s*(\{\{\s*[a-zA-Z\.]+\s*\}\})\s*<\/[a-z]+>/;
-export function compilerState(template: string, state: CompilerOptions["state"] = {}, map: ComponentStateMap): string {
-  let result = template;
+export function compilerState(template: string, state: CompilerOptions["state"], map: ComponentStateMap): string {
+  if (!state) {
+    return;
+  }
 
+  let result = template;
   // 处理 tag 上的 { state.name } 表达式
   result = result.replace(new RegExp(tagStateRegexp, 'g'), (tagStr) => {
     // 过滤出所有类似 <div name={ state.name } > 标签

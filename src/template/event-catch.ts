@@ -3,24 +3,25 @@
  */
 
 import { componentEventMap } from "./compiler";
-import { EventType } from "../constants";
+import { EventPool, EventType } from "../constants";
 
-import type { ComponentEventMap } from "./compiler";
+import type { EventNodeType } from "./compiler";
 import type { Component } from "./type";
 
-// 利用事件冒泡机制去监听事件 (不是所有事件都可以冒泡, 也可以通过 flag 找到对应 dom 节点去监听事件)
+// 通过事件委托去监听事件 (不是所有事件都可以冒泡, 也可以通过 flag 找到对应 dom 节点去监听事件)
 export function bindElementEvent(ele: HTMLElement, methods: Component["methods"]) {
-  ele.addEventListener('click', createEventHandler(EventType.CLICK));
-  ele.addEventListener('change', createEventHandler(EventType.CHANGE))
+  Object.keys(EventPool).forEach((eventName: EventType) => {
+    ele.addEventListener(eventName, createEventHandler(eventName, methods));
+  })
 }
 
-export const BaseEventPool = [EventType.CLICK]
-export const SyntheticEventPool = [EventType.CHANGE]
+// input 元素触发 oninput, react 中也是会触发 onChange
+export const SyntheticEventPool = [EventType.CHANGE, EventType.INPUT];
 
 // 根据监听事件类型分配对应的事件处理器
-export function createEventHandler(type: EventType) {
-  return (e: Event) => {
-    const ele = e.target as HTMLElement;
+export function createEventHandler(type: EventType, methods: Component["methods"]) {
+  return (domEvent: Event) => {
+    const ele = domEvent.target as HTMLElement;
     const flagStr = Object.keys(ele.dataset).find(key => key.startsWith('dom'));
     if (flagStr) {
       const flag = flagStr.toLowerCase().slice(3);
@@ -28,23 +29,22 @@ export function createEventHandler(type: EventType) {
       if (!eventObject) {
         return;
       }
-
-      if (BaseEventPool.includes(type)) {
-        baseEventHandler(type, componentEventMap);
-      } else if (SyntheticEventPool.includes(type)) {
-        syntheticEventHander(type, componentEventMap)
-      }
+      eventHandler(type, domEvent, eventObject, methods)
     }
   }
 }
 
-// 根据事件类型执行对应的事件回调
-export function baseEventHandler(type: EventType, map: ComponentEventMap) {
-
-  console.log('触发了事件', type);
-}
-
-// 某些事件是合成事件 eg: onChange
-export function syntheticEventHander(type: EventType, map: ComponentEventMap) {
-  console.log('触发了事件', type);
+// 处理事件
+export function eventHandler(type: EventType, domEvent: Event, eventObject: EventNodeType, methods: Component["methods"]) {
+  const events = EventPool[type];
+  events.forEach((eventName) => {
+    const event = eventObject.values.find(({ type }) => type === eventName);
+    // 如果绑定了事件就执行
+    if (event) {
+      // 这里可以添加一些对于 exp 的判断, 可能是函数名, 也可能是匿名函数, 也可能是立即调用函数
+      // 这里简单当成函数变量去做 :)
+      const method = methods[event.exp]
+      method(domEvent);
+    }
+  });
 }
