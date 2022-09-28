@@ -2,13 +2,9 @@
  * 编译模板 & 替换事件和状态
  */
 
+import { EventPool, EventType } from "../constants";
 import { useId } from "../utils/use-id";
 import type { Component } from "./type";
-
-export enum EventType {
-  CLICK = "onClick",
-  CHANGE = "onChange",
-}
 
 export enum StateType {
   ATTR = 'attribute',
@@ -35,24 +31,26 @@ export interface StateNodeType {
 
 export type ComponentNode = EventNodeType | StateNodeType;
 
-export const componentEventMap = new Map<string, EventNodeType>();
-export const componentStateMap = new Map<string, StateNodeType>();
+export type ComponentEventMap = Map<string, EventNodeType>
+export type ComponentStateMap = Map<string, StateNodeType>
+
+export const componentEventMap: ComponentEventMap = new Map();
+export const componentStateMap: ComponentStateMap = new Map();
 
 export type CompilerOptions = Omit<Component, "template">;
 
 // 简单处理事件和状态的绑定
 export function compiler(template: string, options: CompilerOptions) {
-  let str = compilerEvent(template, options.methods, componentEventMap);
+  let str = compilerEvent(template, componentEventMap);
   str = compilerState(str, options.state, componentStateMap);
   return str;
 }
 
 // 编译模板事件
-export function compilerEvent(template: string, events: CompilerOptions["methods"] = {}, map: Map<string, EventNodeType>): string {
+export function compilerEvent(template: string, map: ComponentEventMap): string {
   let result = template;
-  const eventList: Array<EventType> = [EventType.CLICK, EventType.CHANGE];
 
-  eventList.forEach((event) => {
+  EventPool.forEach((event) => {
     const regexp = new RegExp(`<.*${event}=\\{(.*)\\}\\s*/?>`, "g");
     const clearRegexp = new RegExp(`\\s*${event}=\\{.*\\}`);
 
@@ -76,7 +74,7 @@ export function compilerEvent(template: string, events: CompilerOptions["methods
 // 编译模板状态
 const tagStateRegexp = /<.*(\{\s*[a-zA-Z\.]+\s*\})\s*[^<>]*\/?>/;
 const valueStateRegexp = /<[^>]+>\s*(\{\{\s*[a-zA-Z\.]+\s*\}\})\s*<\/[a-z]+>/;
-export function compilerState(template: string, state: CompilerOptions["state"] = {}, map: Map<string, StateNodeType>): string {
+export function compilerState(template: string, state: CompilerOptions["state"] = {}, map: ComponentStateMap): string {
   let result = template;
 
   // 处理 tag 上的 { state.name } 表达式

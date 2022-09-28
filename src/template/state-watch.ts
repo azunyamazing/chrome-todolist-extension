@@ -1,11 +1,11 @@
+/**
+ * 这里执行页面渲染完之后, 监听到状态更新时, 局部更新页面
+ */
+
 import { TriggerOptions } from "../constants";
 import { componentEventMap, componentStateMap } from "./compiler";
-import type { Component } from "./type";
 
 export function trigger(target: object, type: TriggerOptions, key?: string, newValue?: unknown, oldValue?: unknown) {
-  console.log("componentEventMap", componentEventMap);
-  console.log("componentStateMap", componentStateMap);
-
   switch (type) {
     case TriggerOptions.ADD:
       console.log(`新增属性：${key} = ${newValue}`);
@@ -22,8 +22,4 @@ export function trigger(target: object, type: TriggerOptions, key?: string, newV
     default:
       break;
   }
-}
-
-export function bindEvent(methods: Component["methods"]) {
-  // TODO: addEventListener
 }
