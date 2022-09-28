@@ -85,7 +85,7 @@ export function compilerEvent(template: string, methods: CompilerOptions['method
 
 // 编译模板状态
 const tagStateRegexp = /<.*(\{\s*[a-zA-Z\.]+\s*\})\s*[^<>]*\/?>/;
-const valueStateRegexp = /<[^>]+>\s*(\{\{\s*[a-zA-Z\.]+\s*\}\})\s*<\/[a-z]+>/;
+const valueStateRegexp = /<[^>]+>\s*(\{\{\s*[a-zA-Z\.]+\s*\}\})\s*<\/[a-z0-9]+>/;
 export function compilerState(template: string, state: CompilerOptions["state"], map: ComponentStateMap): string {
   if (!state) {
     return;
