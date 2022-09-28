@@ -1,13 +1,16 @@
 import { TriggerOptions } from "../constants";
-import { trigger } from "../template/state-watch";
+import { createTriggerHandler } from "../template/state-watch";
 import { isObject, hasOwnKey, isEqual } from "../utils";
 import { useReactive } from ".";
+
+const trigger = createTriggerHandler()
 
 export function createGetter() {
   return (target: object, key: string, receiver: object) => {
     const value = Reflect.get(target, key, receiver);
 
     // 订阅...
+    trigger(target, TriggerOptions.GET, key);
 
     if (isObject(value)) {
       // 对象进行递归代理

@@ -1,4 +1,5 @@
 export const enum TriggerOptions {
+  GET = 'get',
   SET = "set",
   ADD = "add",
   DELETE = "delete",
