@@ -1,5 +1,5 @@
 import { TriggerOptions } from "../constants";
-import { createTriggerHandler } from "../template/state-watch";
+import { createTriggerHandler } from "../template";
 import { isObject, hasOwnKey, isEqual } from "../utils";
 import { useReactive } from ".";
 

@@ -5,7 +5,7 @@
 import { TriggerOptions } from "../constants";
 import { isEqual } from "../utils";
 import { componentStateMap, StateType } from "./compiler";
-import type { ComponentStateMap, StateNodeType } from "./compiler";
+import type { ComponentStateMap } from "./compiler";
 
 export function createTriggerHandler() {
   // 因为就一个组件所以只保存了一个  多个代理可以通过创建多个实例去监听

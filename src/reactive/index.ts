@@ -3,7 +3,7 @@
  */
 
 import { mutableHandlers } from "./mutable-handlers";
-import { isObject } from "../utils/is-object";
+import { isObject } from "../utils";
 
 export function useReactive<T extends object>(target: T): T {
   return createReactiveObject<T>(target, mutableHandlers);

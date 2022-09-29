@@ -1,7 +1,7 @@
 {
-  "name": "todolist-extension",
+  "name": "azunyamazing-reactivity",
   "version": "1.0.0",
-  "description": ":star2: Chrome 扩展工具, 用于记录日常的 Todolist",
+  "description": "从 0 到 1 实现响应式视图更新",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/azunyamazing/chrome-todolist-extension.git"
+    "url": "git+https://github.com/azunyamazing/reactivity.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/azunyamazing/chrome-todolist-extension/issues"
+    "url": "https://github.com/azunyamazing/reactivity/issues"
   },
-  "homepage": "https://github.com/azunyamazing/chrome-todolist-extension#readme",
+  "homepage": "https://github.com/azunyamazing/reactivity#readme",
   "dependencies": {
     "typescript": "^4.8.3",
     "vite": "^3.1.3"

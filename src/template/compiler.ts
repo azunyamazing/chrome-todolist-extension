@@ -3,8 +3,7 @@
  */
 
 import { EventPool, EventType } from "../constants";
-import { camelKeys } from "../utils";
-import { useId } from "../utils/use-id";
+import { camelKeys, useId } from "../utils";
 import type { Component } from "./type";
 
 export enum StateType {
