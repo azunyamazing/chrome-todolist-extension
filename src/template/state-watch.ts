@@ -54,7 +54,6 @@ export function handleStateChange(target: object, key: string, value: unknown, m
       if (!exp.endsWith(key)) {
         return;
       }
-      console.log('exp', exp);
       const keys = exp.split('.');
       let index = 0;
       let prevValue: unknown = undefined;

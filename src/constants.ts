@@ -11,7 +11,7 @@ export enum EventType {
   INPUT = 'input'
 }
 
-// react 中有些事件时合成事件 例如 oninput 也会触发 onChange
+// react 中有些事件是合成事件 例如 input 事件也会触发 onChange
 export const EventPool = {
   [EventType.CLICK]: [EventType.CLICK],
   [EventType.INPUT]: [EventType.INPUT, EventType.CHANGE],

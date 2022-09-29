@@ -132,6 +132,7 @@ export function compilerState(template: string, state: CompilerOptions["state"],
   return result;
 }
 
+// 检查 tag 上是否有唯一的 dom id, 没有就进行添加
 const flagRegExp = /.*data-dom-([a-z0-9]+)\s*.*/;
 const addFlagRegExp = /(.[^\/])(\/?>)/;
 export function compilerNodeFlag(template: string) {
